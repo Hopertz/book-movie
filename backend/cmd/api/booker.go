@@ -35,6 +35,15 @@ func (app *application) insertBooker(c echo.Context) error {
 		Seat: booker.Seat[0].Seat,
 	}
 
+	// loop through booker.Seats and set from selected to ocupied
+	for i := 0; i < len(booker.Seats); i++ {
+		for j := 0; j < len(booker.Seats[i]); j++ {
+			if booker.Seats[i][j] == "selected" {
+				booker.Seats[i][j] = "occupied"
+			}
+		}
+	}
+	
 	now := time.Now()
 
 	// Convert current date and time to primitive.DateTime
