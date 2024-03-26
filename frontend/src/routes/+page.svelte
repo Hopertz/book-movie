@@ -14,25 +14,25 @@
   $: total = totalPrice;
   $: count = seatCount;
 
-  let seats: (null | "selected" | "occupied")[][] = [
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
+  let seats: ("" | "selected" | "occupied")[][] = [
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
   ];
 
   function toggleSeat(row: number, seat: number): void {
     if (seats[row][seat] === "selected") {
       // Deselect seat
-      seats[row][seat] = null;
+      seats[row][seat] = "";
       seatCount -= 1;
       totalPrice -= seatPrice[movie.value];
       selectedSeats = selectedSeats.filter(
         (selectedSeat) => !(selectedSeat.row === row && selectedSeat.seat === seat)
       );
-    } else if (seats[row][seat] === null) {
+    } else if (seats[row][seat] === "") {
       // Select seat
       seats[row][seat] = "selected";
       seatCount += 1;
