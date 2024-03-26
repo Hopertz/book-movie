@@ -14,6 +14,5 @@ type Booker struct {
 	Phone     string             `json:"phone,omitempty" bson:"phone,omitempty"`
 	Seat      []SelectedSeat     `json:"seat,omitempty" bson:"seat,omitempty"`
 	CreatedAt primitive.DateTime `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
-	UpdatedAt primitive.DateTime `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
 }
 
