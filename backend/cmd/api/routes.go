@@ -21,9 +21,9 @@ func (app *application) routes() *echo.Echo {
 
 	e.Use(middleware.CORSWithConfig(DefaultCORSConfig))
 
-	e.POST("/booker", app.createBooker)
-	e.POST("/movie", app.createMovie)
-	e.GET("/movie", app.getMovie)
+	e.POST("/bookers", app.insertBooker)
+	e.POST("/movies", app.insertMovie)
+	e.GET("/movies", app.getMovies)
 
 	return e
 
