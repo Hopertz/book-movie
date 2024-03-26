@@ -121,7 +121,7 @@ p.text span {
     color: #6feaf6;
 }
 
-.button-89 {
+.classyform  button{
     align-items: center;
     display: flex;
     justify-content: center;
@@ -141,11 +141,7 @@ p.text span {
     margin-top: 20px;
 }
 
-.button-89 button {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-}
+
 
 .classyform input {
     display: flex;

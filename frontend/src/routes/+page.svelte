@@ -145,7 +145,7 @@
 			Phone
 			<input bind:value={booker_phone} type="text" />
 		</label>
-		<button class="button-89" on:click={post_boker}>Buy</button>
+		<button on:click={post_boker}>Buy</button>
 	</div>
 </body>
 
