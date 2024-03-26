@@ -21,7 +21,10 @@ func (app *application) routes() *echo.Echo {
 
 	e.Use(middleware.CORSWithConfig(DefaultCORSConfig))
 
+	// bookers routes
 	e.POST("/bookers", app.insertBooker)
+
+	// movie routes
 	e.POST("/movies", app.insertMovie)
 	e.GET("/movies", app.getMovies)
 
