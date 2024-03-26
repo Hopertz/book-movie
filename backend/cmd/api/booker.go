@@ -47,7 +47,8 @@ func (app *application) insertBooker(c echo.Context) error {
 		CreatedAt: primitive.DateTime(dateTime),
 	}
 
-		m := mongodb.Movie{
+
+	m := mongodb.Movie{
 		Name:   booker.Movie,
 		Amount: booker.Amount,
 		Seats:  booker.Seats,
