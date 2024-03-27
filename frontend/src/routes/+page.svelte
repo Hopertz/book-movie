@@ -17,14 +17,24 @@
 	let seats = data.movies[0].seats;
 
 	async function post_boker() {
-		
 		if (seatCount === 0) {
 			toast.error('Must select seats');
 			return;
 		}
 
 		if (booker_name === '' || booker_phone === '') {
-			toast.error('Must enter phone number');
+			toast.error('Must enter name & phone number');
+			return;
+		}
+
+		if (booker_phone.length !== 10) {
+			toast.error('Must enter valid number');
+			return;
+		}
+
+		let vd: string = booker_phone.slice(1, 3);
+		if (vd !== '74' && vd !== '75' && vd !== '76') {
+			toast.error('Must enter voda number only');
 			return;
 		}
 
@@ -47,6 +57,7 @@
 		seats = [...b.seats];
 		booker_name = '';
 		booker_phone = '';
+		toast.success('Ticket Booked Successfully');
 	}
 
 	function toggleSeat(row: number, seat: number): void {
