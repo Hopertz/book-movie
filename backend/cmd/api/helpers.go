@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,4 +26,15 @@ func openDB(cfg config) (*mongo.Client, error) {
 	}
 
 	return client, nil
+}
+
+func (app *application) generateRandomString() (string, error) {
+	randomBytes := make([]byte, 8)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+
+	randomString := hex.EncodeToString(randomBytes)
+	return randomString, nil
 }
