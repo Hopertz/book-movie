@@ -32,7 +32,7 @@
 		});
 
 		const b = await res.json();
-		console.log(b.seats);
+		seats = [...b.seats];
 		booker_name = '';
 		booker_phone = '';
 	}
@@ -54,7 +54,6 @@
 			selectedSeats.push({ row, seat });
 		}
 		seats = [...seats];
-
 	}
 
 	function handleChange(event: Event): void {

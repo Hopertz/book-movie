@@ -2,7 +2,7 @@ import { redirect } from "@sveltejs/kit";
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
-    
+
     const body = await request.json();
 
     const res = await fetch(`http://localhost:8448/bookers`, {
@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ request }) => {
       });
 
     if (res.ok) {
-       return res.json() 
+       return res 
     }
 
     return redirect(303, "/")
