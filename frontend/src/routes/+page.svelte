@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import toast, { Toaster } from 'svelte-french-toast';
 	export let data: PageData;
 
 	let selectedSeats: { row: number; seat: number }[] = [];
@@ -16,6 +17,17 @@
 	let seats = data.movies[0].seats;
 
 	async function post_boker() {
+		
+		if (seatCount === 0) {
+			toast.error('Must select seats');
+			return;
+		}
+
+		if (booker_name === '' || booker_phone === '') {
+			toast.error('Must enter phone number');
+			return;
+		}
+
 		const res = await fetch('/api/movie', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -83,6 +95,7 @@
 
 <body>
 	<div class="cinema">
+		<Toaster />
 		<div class="movie-container">
 			<label for="movie">Pick a movie:</label>
 			<select id="movie" on:change={handleChange}>
