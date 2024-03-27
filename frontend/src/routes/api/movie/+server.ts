@@ -1,11 +1,12 @@
 import { redirect } from "@sveltejs/kit";
 import type { RequestHandler } from '@sveltejs/kit';
+import { SECRET_BASE_API_URL } from '$env/static/private'
 
 export const POST: RequestHandler = async ({ request }) => {
 
     const body = await request.json();
 
-    const res = await fetch(`http://localhost:8448/bookers`, {
+    const res = await fetch(`${SECRET_BASE_API_URL}/bookers`, {
          method: "POST",
         headers: {
           "Content-Type": "application/json",
