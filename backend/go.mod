@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/Golang-Tanzania/mpesa v0.1.9 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect

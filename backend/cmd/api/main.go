@@ -1,14 +1,16 @@
 package main
 
 import (
-	"movie-booking/pkg/mongodb"
 	"context"
 	"flag"
 	"log"
 	"log/slog"
+	"movie-booking/pkg/mongodb"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/Golang-Tanzania/mpesa"
 )
 
 type config struct {
@@ -18,12 +20,15 @@ type config struct {
 	db struct {
 		dsn string
 	}
+
+	mpesa string
 }
 
 type application struct {
-	config config
-	wg     sync.WaitGroup
-	models *mongodb.Models
+	config      config
+	wg          sync.WaitGroup
+	models      *mongodb.Models
+	mpesaClient *mpesa.Client
 }
 
 func main() {
@@ -32,6 +37,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 8448, "API server port")
 	flag.StringVar(&cfg.env, "env", "production", "Environment (development|Staging|production")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("DB_DSN"), "MongoDB DSN")
+	flag.StringVar(&cfg.mpesa, "mpesa-api-key", os.Getenv("MPESA_API_KEY"), "MPESA_API_KEY")
 
 	flag.Parse()
 
@@ -51,9 +57,17 @@ func main() {
 
 	slog.Info("Connected to MongoDB")
 
+	// initialize mpesa
+	clientMpesa, err := mpesa.NewClient(cfg.mpesa, mpesa.Sandbox, 24)
+
+	if err != nil {
+		log.Fatal(err, nil)
+	}
+
 	app := &application{
-		config: cfg,
-		models: mongodb.NewModels(cli),
+		config:      cfg,
+		models:      mongodb.NewModels(cli),
+		mpesaClient: clientMpesa,
 	}
 
 	slog.Info("Starting server on", "port", cfg.port)

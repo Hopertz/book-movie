@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"movie-booking/pkg/mongodb"
 	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/Golang-Tanzania/mpesa"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
@@ -21,9 +24,9 @@ func (app *application) insertBooker(c echo.Context) error {
 			Seat int `json:"seat"`
 		} `json:"seat"`
 
-		Movie string     `json:"movie"`
+		Movie  string     `json:"movie"`
 		Amount int32      `json:"amount"`
-		Seats [][]string `json:"seats"`
+		Seats  [][]string `json:"seats"`
 	}
 
 	if err := c.Bind(&booker); err != nil {
@@ -43,7 +46,7 @@ func (app *application) insertBooker(c echo.Context) error {
 			}
 		}
 	}
-	
+
 	now := time.Now()
 
 	// Convert current date and time to primitive.DateTime
@@ -56,21 +59,44 @@ func (app *application) insertBooker(c echo.Context) error {
 		CreatedAt: primitive.DateTime(dateTime),
 	}
 
-
 	m := mongodb.Movie{
 		Name:   booker.Movie,
 		Amount: booker.Amount,
 		Seats:  booker.Seats,
 	}
 
+	txid, _ := app.generateRandomString()
 
-   // update movie seats
-		_, err := app.models.Movie.UpdateOne(c.Request().Context(), bson.M{"name": m.Name}, bson.M{"$set": m})
-		if err != nil {
-			slog.Error("err", "errorr in updating movie", err)
-			return c.JSON(http.StatusInternalServerError, err)
-		}
-	
+	price := strconv.Itoa(len(booker.Seats) * int(booker.Amount))
+
+	phone := booker.Phone
+
+	no := "255" + phone[1:]
+
+	payload := mpesa.C2BPaymentRequest{
+		Amount:                   price,
+		CustomerMSISDN:           no,
+		Country:                  "TZN",
+		Currency:                 "TZS",
+		ServiceProviderCode:      "000000",
+		TransactionReference:     "T12344C",
+		ThirdPartyConversationID: txid,
+		PurchasedItemsDesc:       "Test",
+	}
+
+	_, err := app.mpesaClient.C2BPayment(context.Background(), payload)
+
+	if err != nil {
+		slog.Error("err", "errorr in making mpesa txn ", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	// update movie seats
+	_, err = app.models.Movie.UpdateOne(c.Request().Context(), bson.M{"name": m.Name}, bson.M{"$set": m})
+	if err != nil {
+		slog.Error("err", "errorr in updating movie", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 
 	// insert booker
 	_, err = app.models.Booker.InsertOne(c.Request().Context(), b)
