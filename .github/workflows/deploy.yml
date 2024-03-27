@@ -26,6 +26,9 @@ jobs:
     - name: Build
       run: go build -v -o bm ./cmd/api
 
+    - name: List files in directory
+      run: ls -la
+      
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -38,6 +41,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: List files in directory
+        run: ls -la
+
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
@@ -53,7 +59,7 @@ jobs:
            source: ./bm
            target: "/home/${{ secrets.USERNAME }}/bm"
 
-      - name: Start Book Moview Backend API service and Reload Nginx
+      - name: Start Book Movie Backend API service and Reload Nginx
         uses: appleboy/ssh-action@master
         with:
            host: ${{ secrets.HOST }}
