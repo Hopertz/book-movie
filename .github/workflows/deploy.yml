@@ -25,24 +25,18 @@ jobs:
       
     - name: Build
       run: go build -v -o bm ./cmd/api
-
-    - name: List files in directory
-      run: ls -la
-      
+     
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
           name: bm-artifact
-          path: ./bm
+          path: ./backend/bm 
           
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v3
-      
-      - name: List files in directory
-        run: ls -la
 
       - name: Download artifact
         uses: actions/download-artifact@v3
