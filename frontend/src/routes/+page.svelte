@@ -55,9 +55,6 @@
 		}
 		seats = [...seats];
 
-		console.log(seats);
-		console.log(row, seat);
-		console.log('selected', selectedSeats);
 	}
 
 	function handleChange(event: Event): void {
