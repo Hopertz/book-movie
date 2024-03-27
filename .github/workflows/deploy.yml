@@ -30,8 +30,6 @@ jobs:
           name: bm-artifact
           path: ./bm
           
-          
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
