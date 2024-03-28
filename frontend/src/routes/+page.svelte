@@ -10,7 +10,7 @@
 	let booker_name: string = '';
 	let booker_phone: string = '';
 
-	let movie = { name: data.movies[0].name, value: data.movies[0].amount }; // Default movie
+	let movie = { name: data.movies[0].name, price: data.movies[0].amount, index: 0 }; // Default movie
 	$: total = totalPrice;
 	$: count = seatCount;
 
@@ -46,7 +46,7 @@
 				phone: booker_phone,
 				seat: selectedSeats,
 				movie: movie.name,
-				amount: movie.value,
+				amount: movie.price,
 				seats: seats
 			}),
 			headers: {
@@ -56,6 +56,7 @@
 
 		const b = await res.json();
 		seats = [...b.seats];
+		data.movies[movie.index].seats = [...b.seats]
 		booker_name = '';
 		booker_phone = '';
 		toast.success('Ticket Booked Successfully');
@@ -66,7 +67,7 @@
 			// Deselect seat
 			seats[row][seat] = '';
 			seatCount -= 1;
-			totalPrice -= movie.value;
+			totalPrice -= movie.price;
 			selectedSeats = selectedSeats.filter(
 				(selectedSeat) => !(selectedSeat.row === row && selectedSeat.seat === seat)
 			);
@@ -74,10 +75,9 @@
 			// Select seat
 			seats[row][seat] = 'selected';
 			seatCount += 1;
-			totalPrice += movie.value;
+			totalPrice += movie.price;
 			selectedSeats.push({ row, seat });
 		}
-		seats = [...seats];
 	}
 
 	function handleChange(event: Event): void {
@@ -85,10 +85,11 @@
 		movie.name = target.value;
 
 		const selectedMovie = data.movies.find((m) => m.name === movie.name);
+		movie.index = data.movies.findIndex((m) => m.name === movie.name);
 
 		seats = [...(selectedMovie?.seats ?? [])];
 
-		movie.value = selectedMovie?.amount ?? 0;
+		movie.price = selectedMovie?.amount ?? 0;
 
 		totalPrice = 0;
 		seatCount = 0;
@@ -97,7 +98,7 @@
 			row.forEach((seat, seatIndex) => {
 				if (seat === 'selected') {
 					seatCount += 1;
-					totalPrice += movie.value;
+					totalPrice += movie.price;
 					selectedSeats.push({ row: rowIndex, seat: seatIndex });
 				}
 			});
@@ -157,7 +158,7 @@
 	</div>
 
 	<div class="classyform">
-		<h3>Enter your details </h3>
+		<h3>Enter your details</h3>
 		<label>
 			Name
 			<input bind:value={booker_name} type="text" placeholder="Lugano Abel" />
