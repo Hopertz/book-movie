@@ -159,6 +159,18 @@ p.text span {
     margin-top: 10px;
 }
 
+.sold-out {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    justify-content: center;
+   
+}
+
 @media only screen and (max-width: 800px) {
     body {
         display: flex;

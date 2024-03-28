@@ -16,6 +16,8 @@
 
 	let seats = data.movies[0].seats;
 
+	$: allOccupied = seats.flatMap(row => row).every(seat => seat === "occupied");
+
 	async function post_boker() {
 		if (seatCount === 0) {
 			toast.error('Must select seats');
@@ -56,7 +58,7 @@
 
 		const b = await res.json();
 		seats = [...b.seats];
-		data.movies[movie.index].seats = [...b.seats]
+		data.movies[movie.index].seats = [...b.seats];
 		booker_name = '';
 		booker_phone = '';
 		toast.success('Ticket Booked Successfully');
@@ -150,24 +152,30 @@
 			{/each}
 		</div>
 
+		{#if allOccupied === false}
 		<p class="text">
 			You have selected <span id="count">{count}</span> seats for a price of $<span id="total"
 				>{total}</span
 			>
 		</p>
+        {/if}
 	</div>
 
 	<div class="classyform">
-		<h3>Enter your details</h3>
-		<label>
-			Name
-			<input bind:value={booker_name} type="text" placeholder="Lugano Abel" />
-		</label>
-		<label>
-			Phone
-			<input bind:value={booker_phone} type="text" placeholder="0754123456" />
-		</label>
-		<button on:click={post_boker}>Buy</button>
+		{#if allOccupied}
+			<div class="sold-out">sold out</div>
+		{:else}
+			<h3>Enter your details</h3>
+			<label>
+				Name
+				<input bind:value={booker_name} type="text" placeholder="Lugano Abel" />
+			</label>
+			<label>
+				Phone
+				<input bind:value={booker_phone} type="text" placeholder="0754123456" />
+			</label>
+			<button on:click={post_boker}>Buy</button>
+		{/if}
 	</div>
 </body>
 
