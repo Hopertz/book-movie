@@ -32,11 +32,12 @@
 			return;
 		}
 
-		let vd: string = booker_phone.slice(1, 3);
-		if (vd !== '74' && vd !== '75' && vd !== '76') {
-			toast.error('Must enter voda number only');
-			return;
-		}
+		// Check if was a voda number
+		// let vd: string = booker_phone.slice(1, 3);
+		// if (vd !== '74' && vd !== '75' && vd !== '76') {
+		// 	toast.error('Must enter voda number only');
+		// 	return;
+		// }
 
 		const res = await fetch('/api/movie', {
 			method: 'POST',
