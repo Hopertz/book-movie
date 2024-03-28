@@ -1,14 +1,11 @@
 package main
 
 import (
-	"context"
 	"log/slog"
 	"movie-booking/pkg/mongodb"
 	"net/http"
-	"strconv"
 	"time"
 
-	"github.com/Golang-Tanzania/mpesa"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
@@ -65,34 +62,27 @@ func (app *application) insertBooker(c echo.Context) error {
 		Seats:  booker.Seats,
 	}
 
-	txid, _ := app.generateRandomString()
+	//Perform ussd cash
+	// payload := mpesa.C2BPaymentRequest{
+	// 	Amount:                   strconv.Itoa(len(booker.Seats) * int(booker.Amount)),
+	// 	CustomerMSISDN:           fmt.Sprintf("255%s",booker.Phone[1:]),
+	// 	Country:                  "TZN",
+	// 	Currency:                 "TZS",
+	// 	ServiceProviderCode:      "000000",
+	// 	TransactionReference:     "T12344C",
+	// 	ThirdPartyConversationID: app.generateRandomString(),
+	// 	PurchasedItemsDesc:       "Test",
+	// }
 
-	price := strconv.Itoa(len(booker.Seats) * int(booker.Amount))
+	// _, err := app.mpesaClient.C2BPayment(context.Background(), payload)
 
-	phone := booker.Phone
-
-	no := "255" + phone[1:]
-
-	payload := mpesa.C2BPaymentRequest{
-		Amount:                   price,
-		CustomerMSISDN:           no,
-		Country:                  "TZN",
-		Currency:                 "TZS",
-		ServiceProviderCode:      "000000",
-		TransactionReference:     "T12344C",
-		ThirdPartyConversationID: txid,
-		PurchasedItemsDesc:       "Test",
-	}
-
-	_, err := app.mpesaClient.C2BPayment(context.Background(), payload)
-
-	if err != nil {
-		slog.Error("err", "errorr in making mpesa txn ", err)
-		return c.JSON(http.StatusInternalServerError, err)
-	}
+	// if err != nil {
+	// 	slog.Error("err", "errorr in making mpesa txn ", err)
+	// 	return c.JSON(http.StatusInternalServerError, err)
+	// }
 
 	// update movie seats
-	_, err = app.models.Movie.UpdateOne(c.Request().Context(), bson.M{"name": m.Name}, bson.M{"$set": m})
+	_, err := app.models.Movie.UpdateOne(c.Request().Context(), bson.M{"name": m.Name}, bson.M{"$set": m})
 	if err != nil {
 		slog.Error("err", "errorr in updating movie", err)
 		return c.JSON(http.StatusInternalServerError, err)
