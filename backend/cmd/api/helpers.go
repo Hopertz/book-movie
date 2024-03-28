@@ -28,13 +28,13 @@ func openDB(cfg config) (*mongo.Client, error) {
 	return client, nil
 }
 
-func (app *application) generateRandomString() (string, error) {
+func (app *application) GenerateRandomString() string {
 	randomBytes := make([]byte, 8)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
-		return "", err
+		return "qwertyxcv"
 	}
 
 	randomString := hex.EncodeToString(randomBytes)
-	return randomString, nil
+	return randomString
 }
