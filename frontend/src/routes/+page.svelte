@@ -156,14 +156,14 @@
 	</div>
 
 	<div class="classyform">
-		<h3>Works with voda number only (MPESA)</h3>
+		<h3>Enter your details </h3>
 		<label>
 			Name
-			<input bind:value={booker_name} type="text" />
+			<input bind:value={booker_name} type="text" placeholder="Lugano Abel" />
 		</label>
 		<label>
 			Phone
-			<input bind:value={booker_phone} type="text" />
+			<input bind:value={booker_phone} type="text" placeholder="0754123456" />
 		</label>
 		<button on:click={post_boker}>Buy</button>
 	</div>
