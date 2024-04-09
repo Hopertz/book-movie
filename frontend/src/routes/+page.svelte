@@ -56,9 +56,9 @@
 			}
 		});
 
-		const b = await res.json();
-		seats = [...b.seats];
-		data.movies[movie.index].seats = [...b.seats];
+		const respSeats = await res.json();
+		seats = [...respSeats.seats];
+		data.movies[movie.index].seats = [...respSeats.seats];
 		booker_name = '';
 		booker_phone = '';
 		seatCount = 0;
