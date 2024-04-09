@@ -16,7 +16,7 @@
 
 	let seats = data.movies[0].seats;
 
-	$: allOccupied = seats.flatMap(row => row).every(seat => seat === "occupied");
+	$: allOccupied = seats.flatMap((row) => row).every((seat) => seat === 'occupied');
 
 	async function post_boker() {
 		if (seatCount === 0) {
@@ -61,6 +61,9 @@
 		data.movies[movie.index].seats = [...b.seats];
 		booker_name = '';
 		booker_phone = '';
+		seatCount = 0;
+		totalPrice = 0;
+		selectedSeats = [];
 		toast.success('Ticket Booked Successfully');
 	}
 
@@ -153,12 +156,12 @@
 		</div>
 
 		{#if allOccupied === false}
-		<p class="text">
-			You have selected <span id="count">{count}</span> seats for a price of $<span id="total"
-				>{total}</span
-			>
-		</p>
-        {/if}
+			<p class="text">
+				You have selected <span id="count">{count}</span> seats for a price of $<span id="total"
+					>{total}</span
+				>
+			</p>
+		{/if}
 	</div>
 
 	<div class="classyform">
