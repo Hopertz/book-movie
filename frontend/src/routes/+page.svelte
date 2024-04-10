@@ -11,7 +11,7 @@
 	let booker_phone: string = '';
 
 	const randomIndex : number = Math.floor(Math.random() * data.movies.length);
-	let movie = { name: data.movies[randomIndex].name, price: data.movies[randomIndex].amount, index: randomIndex }; 
+	let movie = data.movies[randomIndex];
 	
 	$: total = totalPrice;
 	$: count = seatCount;
@@ -36,13 +36,6 @@
 			return;
 		}
 
-		// Check if was a voda number
-		// let vd: string = booker_phone.slice(1, 3);
-		// if (vd !== '74' && vd !== '75' && vd !== '76') {
-		// 	toast.error('Must enter voda number only');
-		// 	return;
-		// }
-
 		const res = await fetch('/api/movie', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -50,7 +43,7 @@
 				phone: booker_phone,
 				seat: selectedSeats,
 				movie: movie.name,
-				amount: movie.price,
+				amount: movie.amount,
 				seats: seats
 			}),
 			headers: {
@@ -60,7 +53,8 @@
 
 		const respSeats = await res.json();
 		seats = [...respSeats.seats];
-		data.movies[movie.index].seats = [...respSeats.seats];
+		let index = data.movies.findIndex((m) => m.name === movie.name);
+		data.movies[index].seats = [...respSeats.seats];
 		booker_name = '';
 		booker_phone = '';
 		seatCount = 0;
@@ -74,7 +68,7 @@
 			// Deselect seat
 			seats[row][seat] = '';
 			seatCount -= 1;
-			totalPrice -= movie.price;
+			totalPrice -= movie.amount;
 			selectedSeats = selectedSeats.filter(
 				(selectedSeat) => !(selectedSeat.row === row && selectedSeat.seat === seat)
 			);
@@ -82,21 +76,16 @@
 			// Select seat
 			seats[row][seat] = 'selected';
 			seatCount += 1;
-			totalPrice += movie.price;
+			totalPrice += movie.amount;
 			selectedSeats.push({ row, seat });
 		}
 	}
 
-	function handleChange(event: Event): void {
-		const target = event.target as HTMLSelectElement;
-		movie.name = target.value;
+	function handleChange(): void {
 
 		const selectedMovie = data.movies.find((m) => m.name === movie.name);
-		movie.index = data.movies.findIndex((m) => m.name === movie.name);
 
 		seats = [...(selectedMovie?.seats ?? [])];
-
-		movie.price = selectedMovie?.amount ?? 0;
 
 		totalPrice = 0;
 		seatCount = 0;
@@ -105,7 +94,7 @@
 			row.forEach((seat, seatIndex) => {
 				if (seat === 'selected') {
 					seatCount += 1;
-					totalPrice += movie.price;
+					totalPrice += movie.amount;
 					selectedSeats.push({ row: rowIndex, seat: seatIndex });
 				}
 			});
@@ -118,9 +107,9 @@
 		<Toaster />
 		<div class="movie-container">
 			<label for="movie">Pick a movie:</label>
-			<select bind:value={movie.name} id="movie" on:change={handleChange}>
+			<select bind:value={movie} id="movie" on:change={handleChange}>
 				{#each data.movies as movie}
-					<option value={movie.name}>{movie.name} (${movie.amount})</option>
+					<option value={movie}>{movie.name} (${movie.amount})</option>
 				{/each}
 			</select>
 		</div>
