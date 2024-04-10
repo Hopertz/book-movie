@@ -10,11 +10,13 @@
 	let booker_name: string = '';
 	let booker_phone: string = '';
 
-	let movie = { name: data.movies[0].name, price: data.movies[0].amount, index: 0 }; // Default movie
+	const randomIndex : number = Math.floor(Math.random() * data.movies.length);
+	let movie = { name: data.movies[randomIndex].name, price: data.movies[randomIndex].amount, index: randomIndex }; 
+	
 	$: total = totalPrice;
 	$: count = seatCount;
 
-	let seats = data.movies[0].seats;
+	let seats = data.movies[randomIndex].seats;
 
 	$: allOccupied = seats.flatMap((row) => row).every((seat) => seat === 'occupied');
 
@@ -116,7 +118,7 @@
 		<Toaster />
 		<div class="movie-container">
 			<label for="movie">Pick a movie:</label>
-			<select id="movie" on:change={handleChange}>
+			<select bind:value={movie.name} id="movie" on:change={handleChange}>
 				{#each data.movies as movie}
 					<option value={movie.name}>{movie.name} (${movie.amount})</option>
 				{/each}
