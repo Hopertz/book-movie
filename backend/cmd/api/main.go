@@ -58,16 +58,16 @@ func main() {
 	slog.Info("Connected to MongoDB")
 
 	// initialize mpesa
-	clientMpesa, err := mpesa.NewClient(cfg.mpesa, mpesa.Sandbox, 24)
+	// clientMpesa, err := mpesa.NewClient(cfg.mpesa, mpesa.Sandbox, 24)
 
-	if err != nil {
-		log.Fatal(err, nil)
-	}
+	// if err != nil {
+	// 	log.Fatal(err, nil)
+	// }
 
 	app := &application{
 		config:      cfg,
 		models:      mongodb.NewModels(cli),
-		mpesaClient: clientMpesa,
+		// mpesaClient: clientMpesa,
 	}
 
 	slog.Info("Starting server on", "port", cfg.port)
