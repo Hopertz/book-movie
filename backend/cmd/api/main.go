@@ -9,8 +9,6 @@ import (
 	"os"
 	"sync"
 	"time"
-
-	"github.com/Golang-Tanzania/mpesa"
 )
 
 type config struct {
@@ -28,7 +26,6 @@ type application struct {
 	config      config
 	wg          sync.WaitGroup
 	models      *mongodb.Models
-	mpesaClient *mpesa.Client
 }
 
 func main() {
@@ -57,17 +54,11 @@ func main() {
 
 	slog.Info("Connected to MongoDB")
 
-	// initialize mpesa
-	// clientMpesa, err := mpesa.NewClient(cfg.mpesa, mpesa.Sandbox, 24)
 
-	// if err != nil {
-	// 	log.Fatal(err, nil)
-	// }
 
 	app := &application{
 		config:      cfg,
 		models:      mongodb.NewModels(cli),
-		// mpesaClient: clientMpesa,
 	}
 
 	slog.Info("Starting server on", "port", cfg.port)

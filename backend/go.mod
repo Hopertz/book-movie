@@ -3,7 +3,6 @@ module movie-booking
 go 1.22.0
 
 require (
-	github.com/Golang-Tanzania/mpesa v0.1.9
 	github.com/labstack/echo/v4 v4.11.4
 	go.mongodb.org/mongo-driver v1.14.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22

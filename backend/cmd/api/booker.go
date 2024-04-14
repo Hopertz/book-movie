@@ -62,25 +62,6 @@ func (app *application) insertBooker(c echo.Context) error {
 		Seats:  booker.Seats,
 	}
 
-	//Perform ussd cash
-	// payload := mpesa.C2BPaymentRequest{
-	// 	Amount:                   strconv.Itoa(len(booker.Seats) * int(booker.Amount)),
-	// 	CustomerMSISDN:           fmt.Sprintf("255%s",booker.Phone[1:]),
-	// 	Country:                  "TZN",
-	// 	Currency:                 "TZS",
-	// 	ServiceProviderCode:      "000000",
-	// 	TransactionReference:     "T12344C",
-	// 	ThirdPartyConversationID: app.generateRandomString(),
-	// 	PurchasedItemsDesc:       "Test",
-	// }
-
-	// _, err := app.mpesaClient.C2BPayment(context.Background(), payload)
-
-	// if err != nil {
-	// 	slog.Error("err", "errorr in making mpesa txn ", err)
-	// 	return c.JSON(http.StatusInternalServerError, err)
-	// }
-
 	// update movie seats
 	_, err := app.models.Movie.UpdateOne(c.Request().Context(), bson.M{"name": m.Name}, bson.M{"$set": m})
 	if err != nil {
