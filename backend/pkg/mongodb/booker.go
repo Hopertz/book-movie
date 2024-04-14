@@ -5,8 +5,8 @@ import (
 )
 
 type SelectedSeat struct {
-	Row  int `json:"row,omitempty" bson:"row,omitempty"`
-	Seat int `json:"seat,omitempty" bson:"seat,omitempty"`
+	Row  int `json:"row" bson:"row"`
+	Seat int `json:"seat" bson:"seat"`
 }
 
 type Booker struct {
