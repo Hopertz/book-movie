@@ -12,6 +12,7 @@ export interface BookerType {
 
 
 export interface Movie {
+    id : string
     name: string;
     amount: number;
     seats: string[][];
