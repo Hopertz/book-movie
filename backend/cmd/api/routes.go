@@ -27,6 +27,7 @@ func (app *application) routes() *echo.Echo {
 	// movie routes
 	e.POST("/movies", app.insertMovie)
 	e.GET("/movies", app.getMovies)
+	e.GET("/movies/:id", app.getMovieById)
 
 	return e
 
