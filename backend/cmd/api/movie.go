@@ -11,6 +11,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+type Movie struct {
+	ID     primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name   string             `json:"name,omitempty" bson:"name,omitempty"`
+	Amount int32              `json:"amount,omitempty" bson:"amount,omitempty"`
+	Seats  [][]string         `json:"seats,omitempty" bson:"seats,omitempty"`
+}
+
 func (app *application) insertMovie(c echo.Context) error {
 
 	var Movie struct {
@@ -50,7 +57,13 @@ func (app *application) insertMovie(c echo.Context) error {
 
 func (app *application) getMovies(c echo.Context) error {
 
-	var results []*mongodb.Movie
+	type Result struct {
+		ID     primitive.ObjectID `json:"id"`
+		Name   string             `json:"name"`
+		Amount int32              `json:"amount"`
+	}
+
+	var results []Result
 
 	ctx := c.Request().Context()
 
@@ -69,7 +82,12 @@ func (app *application) getMovies(c echo.Context) error {
 			slog.Error("err", "error getting movies", err)
 			return c.JSON(http.StatusInternalServerError, err)
 		}
-		results = append(results, &elem)
+		res := Result{
+			ID: elem.ID,
+			Name: elem.Name,
+			Amount: elem.Amount,
+		}
+		results = append(results, res)
 	}
 
 	return c.JSON(http.StatusOK, results)
@@ -84,7 +102,7 @@ func (app *application) getMovieById(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	var movie *mongodb.Movie
+	var movie mongodb.Movie
 
 	ctx := c.Request().Context()
 
