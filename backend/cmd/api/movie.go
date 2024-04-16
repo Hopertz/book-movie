@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -72,5 +73,27 @@ func (app *application) getMovies(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, results)
+
+}
+
+func (app *application) getMovieById(c echo.Context) error {
+
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	var movie *mongodb.Movie
+
+	ctx := c.Request().Context()
+
+	err = app.models.Movie.FindOne(ctx, bson.M{"_id": id}).Decode(movie)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, movie)
 
 }
