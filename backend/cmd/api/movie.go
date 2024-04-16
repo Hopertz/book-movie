@@ -97,7 +97,7 @@ func (app *application) getMovieById(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	err = app.models.Movie.FindOne(ctx, bson.M{"_id": id}).Decode(movie)
+	err = app.models.Movie.FindOne(ctx, bson.M{"_id": id}).Decode(&movie)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
