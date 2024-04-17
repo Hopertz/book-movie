@@ -15,5 +15,4 @@ export interface Movie {
     id : string
     name: string;
     amount: number;
-    seats: string[][];
 }
