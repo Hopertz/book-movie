@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import { onMount } from 'svelte';
 	export let data: PageData;
 
 	let selectedSeats: { row: number; seat: number }[] = [];
@@ -10,15 +11,26 @@
 	let booker_name: string = '';
 	let booker_phone: string = '';
 
-	const randomIndex : number = Math.floor(Math.random() * data.movies.length);
+	const randomIndex: number = Math.floor(Math.random() * data.movies.length);
 	let movie = data.movies[randomIndex];
-	
-	$: total = totalPrice;
-	$: count = seatCount;
-
-	let seats = data.movies[randomIndex].seats;
+	let seats: string[][] = [];
 
 	$: allOccupied = seats.flatMap((row) => row).every((seat) => seat === 'occupied');
+
+	onMount(async () => {
+		const res = await fetch('/api/getmovie', {
+			method: 'POST',
+			body: JSON.stringify({
+				id: movie.id
+			}),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		const respMovie = await res.json();
+		seats = respMovie.seats;
+	});
 
 	async function post_boker() {
 		if (seatCount === 0) {
@@ -36,7 +48,7 @@
 			return;
 		}
 
-		const res = await fetch('/api/movie', {
+		const res = await fetch('/api/postbooker', {
 			method: 'POST',
 			body: JSON.stringify({
 				name: booker_name,
@@ -53,8 +65,6 @@
 
 		const respSeats = await res.json();
 		seats = [...respSeats.seats];
-		let index = data.movies.findIndex((m) => m.name === movie.name);
-		data.movies[index].seats = [...respSeats.seats];
 		booker_name = '';
 		booker_phone = '';
 		seatCount = 0;
@@ -81,24 +91,22 @@
 		}
 	}
 
-	function handleChange(): void {
+	async function handleChange() {
+		const res = await fetch('/api/getmovie', {
+			method: 'POST',
+			body: JSON.stringify({
+				id: movie.id
+			}),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
 
-		const selectedMovie = data.movies.find((m) => m.name === movie.name);
-
-		seats = [...(selectedMovie?.seats ?? [])];
-
+		const respMovie = await res.json();
+		seats = [...respMovie.seats];
 		totalPrice = 0;
 		seatCount = 0;
 		selectedSeats = [];
-		seats.forEach((row, rowIndex) => {
-			row.forEach((seat, seatIndex) => {
-				if (seat === 'selected') {
-					seatCount += 1;
-					totalPrice += movie.amount;
-					selectedSeats.push({ row: rowIndex, seat: seatIndex });
-				}
-			});
-		});
 	}
 </script>
 
@@ -139,7 +147,6 @@
 							on:click={() => toggleSeat(rowIndex, seatIndex)}
 							title={`Row: ${rowIndex + 1}, Seat: ${seatIndex + 1}`}
 						>
-							<!-- <div style="font-size: 2;">12</div> -->
 						</button>
 					{/each}
 				</div>
@@ -148,9 +155,8 @@
 
 		{#if allOccupied === false}
 			<p class="text">
-				You have selected <span id="count">{count}</span> seats for a price of $<span id="total"
-					>{total}</span
-				>
+				You have selected <span id="count">{seatCount}</span> seats for a price of $
+				<span id="total">{totalPrice}</span>
 			</p>
 		{/if}
 	</div>

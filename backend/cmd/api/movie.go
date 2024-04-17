@@ -8,8 +8,16 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
 )
+
+type Movie struct {
+	ID     primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name   string             `json:"name,omitempty" bson:"name,omitempty"`
+	Amount int32              `json:"amount,omitempty" bson:"amount,omitempty"`
+	Seats  [][]string         `json:"seats,omitempty" bson:"seats,omitempty"`
+}
 
 func (app *application) insertMovie(c echo.Context) error {
 
@@ -50,11 +58,11 @@ func (app *application) insertMovie(c echo.Context) error {
 
 func (app *application) getMovies(c echo.Context) error {
 
-	var results []*mongodb.Movie
+	var res []*mongodb.Movie
 
 	ctx := c.Request().Context()
 
-	cursor, err := app.models.Movie.Find(ctx, bson.M{})
+	cursor, err := app.models.Movie.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"id": 1, "name": 1, "amount": 1}))
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
@@ -69,10 +77,11 @@ func (app *application) getMovies(c echo.Context) error {
 			slog.Error("err", "error getting movies", err)
 			return c.JSON(http.StatusInternalServerError, err)
 		}
-		results = append(results, &elem)
+
+		res = append(res, &elem)
 	}
 
-	return c.JSON(http.StatusOK, results)
+	return c.JSON(http.StatusOK, res)
 
 }
 
@@ -84,11 +93,11 @@ func (app *application) getMovieById(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	var movie *mongodb.Movie
+	var movie mongodb.Movie
 
 	ctx := c.Request().Context()
 
-	err = app.models.Movie.FindOne(ctx, bson.M{"_id": id}).Decode(movie)
+	err = app.models.Movie.FindOne(ctx, bson.M{"_id": id}).Decode(&movie)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
